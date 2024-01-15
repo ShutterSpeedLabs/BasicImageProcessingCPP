@@ -13,6 +13,12 @@ namespace fs = std::filesystem;
 #define noOfrows   240
 #define noOfcolms  320
 #define PlateauPercentage 0.1
+#define moving_avg_fr   16  
+
+int histMinValue_arr[moving_avg_fr] = {0};
+int histMaxValue_arr[moving_avg_fr] = {0};
+bool histAvg = false;
+int histAvgCounter = 0;
 
 int minThresold = 5;
 int maxThresold = 5;
@@ -67,7 +73,7 @@ int main() {
             //imshow("Raw Output", outpuMat);
             //imshow("Agc Output", agcOutMat);
             imshow("Zoomed Output", zoomedImage);
-            char c = (char)waitKey(25);//Allowing 25 milliseconds frame processing time and initiating break condition//
+            char c = (char)waitKey(10); 
             if (c == 27){ //If 'Esc' is entered break the loop//
                 break;
             }
@@ -199,6 +205,25 @@ void calculateAGCLUT()
             break;
         }
     }
+    if(histAvgCounter>=(moving_avg_fr-2)){
+        histMinValue_arr[histAvgCounter] = histMinValue;
+        histMaxValue_arr[histAvgCounter] = histMaxValue;
+        histAvgCounter = 0;
+    }
+    else{
+        histMinValue_arr[histAvgCounter] = histMinValue;
+        histMaxValue_arr[histAvgCounter] = histMaxValue;  
+        histAvgCounter++;      
+    }
+
+
+    for(int i=0;i<moving_avg_fr;i++){
+        histMinValue = histMinValue + histMinValue_arr[i];
+        histMaxValue = histMaxValue + histMaxValue_arr[i];
+    }
+    histMinValue = histMinValue / moving_avg_fr;
+    histMaxValue = histMaxValue / moving_avg_fr;
+
     minMaxDiff = histMaxValue - histMinValue;
     if (minMaxDiff < 1)
     {

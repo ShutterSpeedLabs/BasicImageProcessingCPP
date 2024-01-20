@@ -40,6 +40,7 @@ Mat outpuMat (noOfrows,noOfcolms, CV_16UC1);
 Mat offsetMat (noOfrows,noOfcolms, CV_16UC1);
 Mat nucOutMat (noOfrows,noOfcolms, CV_16UC1);
 Mat agcOutMat (noOfrows, noOfcolms, CV_8UC1);
+Mat vid_frame (480, 640, CV_8UC3);
 
 int frameCounter = 0;
 std::string folderPath = "/media/kisna/data2/city/Denmark/Copenhagen/16BitImages/output/";
@@ -49,7 +50,19 @@ int main() {
     cv::Mat zoomedImage;
     int fileNumber = 1; // Example integer
     std::ostringstream fileNameStream;
+    std::string outputVideoPath = "output_video.avi";
+    // Set the frame size and frames per second (FPS)
+    cv::Size frameSize(640, 480);  // Adjust the size according to your frames
+    int fps = 30;
+    // Open the video writer
+    cv::VideoWriter videoWriter(outputVideoPath, cv::VideoWriter::fourcc('X','V','I','D'), fps, frameSize);
 
+    // Check if the video writer is successfully opened
+    if (!videoWriter.isOpened()) {
+        std::cerr << "Error: Could not open the video writer." << std::endl;
+        return -1;
+    }
+    
     for (const auto& entry : fs::directory_iterator(folderPath)) {
         if (fs::is_regular_file(entry.path())) {
             auto start = std::chrono::high_resolution_clock::now();
@@ -72,8 +85,14 @@ int main() {
             cv::resize(agcOutMat, zoomedImage, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
             //imshow("Raw Output", outpuMat);
             //imshow("Agc Output", agcOutMat);
-            imshow("Zoomed Output", zoomedImage);
-            char c = (char)waitKey(10); 
+  
+            cv::Mat colorImage;
+            cv::cvtColor(zoomedImage, colorImage, cv::COLOR_GRAY2BGR); 
+            if(fileNumber>50){
+                videoWriter.write(colorImage);
+            }           
+            imshow("Zoomed Output", colorImage);
+            char c = (char)waitKey(1); 
             if (c == 27){ //If 'Esc' is entered break the loop//
                 break;
             }
@@ -91,6 +110,10 @@ int main() {
             }
         }
     }
+    // Release the video writer
+    videoWriter.release();
+
+    std::cout << "Video creation completed." << std::endl;
 }
 
 void byteswapimg(const uchar *imgptr, const uchar *imgOut, int rows, int colms)

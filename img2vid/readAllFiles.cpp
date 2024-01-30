@@ -42,7 +42,8 @@ void listFilesInFolder(const std::string& folderPath) {
 }
 
 int main() {
-    std::string folderPath = "/media/kisna/data2/city/Denmark/Copenhagen/16BitImages/output/";
+    //std::string folderPath = "/media/kisna/data2/city/Denmark/Copenhagen/16BitImages/output/";
+    std::string folderPath =  "/media/kisna/dataset/ComputerVision/Thermal_Dataset/CVC-09/CVCInfrared/DayTime/Test/FramesPos/";
     
     listFilesInFolder(folderPath);
 

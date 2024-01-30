@@ -2,3 +2,10 @@ img2vid/img2vidIR
 opencv_imread/gray2color
 img2vid/*.avi
 img2vid/AGCIR
+img2vid/readAllFiles
+extraCodes/readtxt_test
+img2vid/readAllFiles
+extraCodes/readtxt
+extraCodes/int2str
+img2vid/img2vidCVC
+img2vid/readAllFiles
